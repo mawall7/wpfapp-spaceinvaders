@@ -1,0 +1,44 @@
+﻿<Window x:Class="wpfapp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:wpfapp1"
+        mc:Ignorable="d"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        Title="MainWindow" Height="549" Width="860">
+    
+        <Grid Margin="0,0,0,0" x:Name="MyGrid">
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/spacebackgr.jpg"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <!--en kontroll med attached property som läggs till av griden själv. griden flyttar därmed controll innehållet till en rad eller kolumn-->
+        <!--<ListBox Grid.Row="2" x:Name="lstNames"/>-->
+        <!--<StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+            <TextBox x:Name="txtName"/>
+            <Button x:Name="btnAdd" Margin="0,5,0,0"  Click="ButtonAddName_Click">Add Name....</Button>
+            -->
+        <!--<Polygon Points="1,2,30,30,1,3" x:Name="myPoly" FillRule="EvenOdd" Fill="Black"></Polygon>-->
+
+        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="5" Grid.Column ="10" Width="60" Height="60" x:Name="myImage" ></Image>
+        <!--<Image Source= "Images/si1_1.png" Grid.Row="0" Grid.Column ="0" Width="50" Height="50" x:Name="si1" ></Image>-->
+        <TextBlock x:Name="textblock" Grid.Row="2" Grid.Column="2">
+            <!--</StackPanel>-->
+        </TextBlock>
+        <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->
+    </Grid>
+
+</Window>

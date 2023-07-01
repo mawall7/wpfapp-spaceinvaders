@@ -1,0 +1,3 @@
+wpf app error log -lösningar
+
+inga invaders visas - bilder ska vara i Images mapp , path ska vara "/projectname;component/Images/bild.png"

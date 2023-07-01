@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\bird.GIF" />
+    <None Remove="Images\si1_1.png" />
+    <None Remove="Images\si1_2.png" />
+    <None Remove="Images\Space-Invaders-Ship.png" />
+    <None Remove="Images\spacebackgr.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\bird.GIF">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="spaceinvaders">
+      <HintPath>..\..\spaceinvaders\spaceinvaders\bin\Debug\net5.0\spaceinvaders.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\si1_1.png" />
+    <Resource Include="Images\si1_2.png" />
+    <Resource Include="Images\Space-Invaders-Ship.png" />
+    <Resource Include="Images\spacebackgr.jpg" />
+  </ItemGroup>
+
+</Project>

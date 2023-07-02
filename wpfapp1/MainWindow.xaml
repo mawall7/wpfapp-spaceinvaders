@@ -32,8 +32,9 @@
             <Button x:Name="btnAdd" Margin="0,5,0,0"  Click="ButtonAddName_Click">Add Name....</Button>
             -->
         <!--<Polygon Points="1,2,30,30,1,3" x:Name="myPoly" FillRule="EvenOdd" Fill="Black"></Polygon>-->
-
-        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="5" Grid.Column ="10" Width="60" Height="60" x:Name="myImage" ></Image>
+        <Image Source= "Images/laser.png" Grid.Row="19" Grid.Column ="10" Width="60" Height="60" x:Name="myLaser" Visibility="Hidden"></Image>
+        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="20" Grid.Column ="10" Width="60" Height="60" x:Name="myImage" ></Image>
+        
         <!--<Image Source= "Images/si1_1.png" Grid.Row="0" Grid.Column ="0" Width="50" Height="50" x:Name="si1" ></Image>-->
         <TextBlock x:Name="textblock" Grid.Row="2" Grid.Column="2">
             <!--</StackPanel>-->

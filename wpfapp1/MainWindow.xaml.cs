@@ -22,13 +22,20 @@ namespace wpfapp1
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow: Window
     {
         public bool invadertoggle = false;
-        public int ShipX = 1;
+        public int ShipX = 10;
         public int InvX = 0;
         public int InvY = 0;
+        public int LaserX;
+        public int LaserY = 19;
+        public bool Fire = false;
         public Timer T { get; set; }
+        public SpaceInvaders SpI { get; set; }
+        public List<Image> Images { get; set; }
+      
+
 
         
 
@@ -40,12 +47,43 @@ namespace wpfapp1
                 //int c = 0;
                 InitializeComponent();
                 UpdateInvadersGrid();
-                //Update();
+                UpdateFireTasks();
+                Update();
+                //CheckCollision();
+
+                //DispatcherTimer timer = new DispatcherTimer();
+                //timer.Interval = TimeSpan.FromSeconds(1);
+                //timer.Tick += timer_Tick;
+                //timer.Start();
+           
             
-            //DispatcherTimer timer = new DispatcherTimer();
-            //timer.Interval = TimeSpan.FromSeconds(1);
-            //timer.Tick += timer_Tick;
-            //timer.Start();
+        }
+
+        public void Laser()
+        {
+            
+                if (Fire)
+                {
+                    Grid.SetRow(myLaser, LaserY--);
+                    Grid.SetColumn(myLaser, LaserX);
+                }
+                 
+                if(LaserY == 0)
+                {
+                    LaserY = 19;
+                    Fire = false;
+                    myLaser.Visibility = Visibility.Hidden;
+                } 
+        }
+
+        private async void UpdateFireTasks()
+        {
+            while (true)
+            {
+                await Task.Delay(50);
+                Laser();
+                CheckCollision();
+            }
         }
 
         private async void Update()
@@ -53,7 +91,10 @@ namespace wpfapp1
             while (true)
             {
                 invadertoggle = !invadertoggle;
-                await Task.Delay(500);
+                await Task.Delay(800);
+                UpdateInvaders(invadertoggle);
+               
+                //SpI.DrawInvaders();
                // UpdateInvaders(invadertoggle);
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
@@ -86,49 +127,91 @@ namespace wpfapp1
             {
                 ShipX++;
             }
+
+            if(e.Key == Key.Space & Fire == false)
+            {
+                Fire = true;
+                myLaser.Visibility = Visibility.Visible;
+                LaserX = ShipX;
+
+            }
             
             Grid.SetColumn(myImage, ShipX);
             
         }
 
-        //public void UpdateInvaders(bool toggle)
-        //{
-        //    string path;
-        //    path = toggle == true ? "/wpfapp1;component/Images/si1_2.png" : "/wpfapp1;component/Images/si1_1.png";
-        //    BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
-        //    si1.Source = image;
-        //    if (Grid.GetColumn(si1) == 2) /*&& Grid.GetRow(si1) == Even*/
-        //    {
-        //        InvY++;
-        //        Grid.SetRow(si1, InvY); Grid.SetColumn(si1, 0);
-        //        InvX = 0;
-        //    }
-        //    else
-        //    {
-        //        InvX++;
-        //        Grid.SetColumn(si1, InvX);
-        //    }
-        //        //Grid.SetRow(si1, InvX++)
-        //}
+        public void UpdateInvaders(bool toggle) //toggle is for image
+        {
+            string path;
+            int count = 1;
+            string name;
+            object sitoerase = null;
+            SpI.UpdateInvaders(); //uppdaterar x och y horisontellt och radbyte
+            
+             //ändrar grid värden(row, column) till x y ovan för imagescontrolls  
+            
+                foreach (var item in SpI.List) 
+                {
+                    name = "si" + count;
+                    TextBlock testfind = (TextBlock)MyGrid.FindName("textblock");
+                    //Image foundimage = (Image)MyGrid.FindName(name); //returnerar imagecontrols
+                    Image foundimage = Images.Where(i => i.Name == name).FirstOrDefault(); //Image objekt behöver vara pekare ? 
+                    Grid.SetRow(foundimage, item.PosY);
+                    Grid.SetColumn(foundimage, item.PosX);
+                    path = toggle == true ? "/wpfapp1;component/Images/si1_2.png" : "/wpfapp1;component/Images/si1_1.png";
+                    BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
+                    foundimage.Source = image;
+                    //*done Collision behöver flyttas ut! och skapa en till update metod. annars kollas bara collision då de flyttas!
+                    count++;
+                }
+            
+          
+            //Grid.SetRow(si1, InvX++)
+        }
 
+        public void CheckCollision()
+        {
+                object sitoerase = null;
+                int count = 0;
+                foreach (var item in SpI.List)
+                {
+                    count++;
+
+                    if (LaserY == item.PosY && LaserX == item.PosX)
+                    {
+                        Image toerase = Images[count - 1];
+                        toerase.Visibility = Visibility.Hidden;
+                        LaserY =  19; //to do 
+                        //sitoerase = item;
+                        //MyGrid.Children.Remove(toerase); //funkar ej bilderna byter position varför?!
+
+                    }
+                }
+
+                if (sitoerase != null)
+                {
+                    SpI.List.Remove((GameObject)sitoerase);
+                }
+            }
+        
         public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
         {
             //skapa rows and columns 
             string path = "/wpfapp1;component/Images/si1_2.png";
-            //string path = "C:/Users/matte/source/repos/wpfapp1/wpfapp1/Images/si1_2.png";
-            spaceinvaders.SpaceInvaders sp = new SpaceInvaders(SpaceInvaders.Typeui.WpfApp);
-            sp.InitEnemies();
+            SpI = new SpaceInvaders(22, SpaceInvaders.Typeui.WpfApp);
+            SpI.InitEnemies();
             int count = 0;
             int row = 0;
-            
-            foreach (var item in sp.List.ToArray())
+            Images = new List<Image>();
+            foreach (var item in SpI.List.ToArray())
             {
                 count++;
-                var contrtag = "si" + count;
+                var contrtag = "si" + count; //Name prop
                 var ImageControl = new Image(); ImageControl.Name = contrtag;
                 BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                 ImageControl.Source = image;
                 ImageControl.Width = 30; ImageControl.Height = 30;
+                Images.Add(ImageControl); // skriv in i SpaceInvaders class istället?
                 //row = count < 10 ? row : ; 
                 Grid.SetRow(ImageControl, item.PosY);
                 Grid.SetColumn(ImageControl, item.PosX);
@@ -138,13 +221,8 @@ namespace wpfapp1
                 
             }
 
-
-            
-            
-
-            
-
         }
+           
     }
 
 }

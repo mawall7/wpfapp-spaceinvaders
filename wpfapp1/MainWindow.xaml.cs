@@ -31,6 +31,7 @@ namespace wpfapp1
         public int LaserX;
         public int LaserY = 19;
         public bool Fire = false;
+        public bool SiHit = false;
         public Timer T { get; set; }
         public SpaceInvaders SpI { get; set; }
         public List<Image> Images { get; set; }
@@ -49,7 +50,7 @@ namespace wpfapp1
                 UpdateInvadersGrid();
                 UpdateFireTasks();
                 Update();
-                //CheckCollision();
+                // UpCheckCollision();
 
                 //DispatcherTimer timer = new DispatcherTimer();
                 //timer.Interval = TimeSpan.FromSeconds(1);
@@ -61,19 +62,25 @@ namespace wpfapp1
 
         public void Laser()
         {
+                if(Fire ==  false || LaserY == 0)/*if(LaserY == 0)*/
+                {
+                    LaserY = 19;
+                    Fire = false;
+                    Grid.SetRow(myLaser, LaserY);
+                    Grid.SetColumn(myLaser, LaserX);
+                    myLaser.Visibility = Visibility.Hidden;
+
+            } 
             
                 if (Fire)
                 {
                     Grid.SetRow(myLaser, LaserY--);
                     Grid.SetColumn(myLaser, LaserX);
+                    
                 }
                  
-                if(LaserY == 0)
-                {
-                    LaserY = 19;
-                    Fire = false;
-                    myLaser.Visibility = Visibility.Hidden;
-                } 
+
+                //myLaser.Visibility = Visibility.Hidden;
         }
 
         private async void UpdateFireTasks()
@@ -82,7 +89,7 @@ namespace wpfapp1
             {
                 await Task.Delay(50);
                 Laser();
-                CheckCollision();
+                CheckCollision(); //to do break vid träff kör nu flera gånger för varje förflyttning av sis
             }
         }
 
@@ -128,7 +135,7 @@ namespace wpfapp1
                 ShipX++;
             }
 
-            if(e.Key == Key.Space & Fire == false)
+            if(e.Key == Key.Space && Fire == false)
             {
                 Fire = true;
                 myLaser.Visibility = Visibility.Visible;
@@ -171,19 +178,29 @@ namespace wpfapp1
 
         public void CheckCollision()
         {
+               
                 object sitoerase = null;
+                Image toerase = null;
                 int count = 0;
                 foreach (var item in SpI.List)
                 {
                     count++;
 
-                    if (LaserY == item.PosY && LaserX == item.PosX)
+                    if (LaserY == item.PosY && LaserX == item.PosX & toerase == null)
                     {
-                        Image toerase = Images[count - 1];
-                        toerase.Visibility = Visibility.Hidden;
-                        LaserY =  19; //to do 
-                        //sitoerase = item;
-                        //MyGrid.Children.Remove(toerase); //funkar ej bilderna byter position varför?!
+                        toerase = Images[count - 1].Visibility == Visibility.Visible ? Images[count - 1] : null;
+                        if (toerase != null)
+                        {
+                            toerase.Visibility = Visibility.Hidden; // si hit control
+                                                                    // myLaser.Visibility = Visibility.Hidden; // laser control
+                            Fire = false;
+                            //LaserY = 19;
+                            
+                            //sitoerase = item;
+                            //MyGrid.Children.Remove(toerase); //funkar ej bilderna byter position varför?!
+                            
+                        }
+                        //to do 
 
                     }
                 }

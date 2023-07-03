@@ -29,10 +29,13 @@ namespace wpfapp1
         public int InvX = 0;
         public int InvY = 0;
         public int LaserX;
+        public int ShipY = 20;
         public int LaserY = 19;
         public bool Fire = false;
         public bool SiHit = false;
-        public Image Toerase { get; set; }
+        public bool InvFire = true;
+        int FireY { get; set; }
+        public Image Toerase { get; set; } = null;
         public object Sitoerase { get; set; }
         public int test;
      
@@ -41,7 +44,7 @@ namespace wpfapp1
         public SpaceInvaders SpI { get; set; }
         public List<Image> Images { get; set; }
       
-
+        private Image Invlaser { get; set; }
 
         
 
@@ -53,7 +56,8 @@ namespace wpfapp1
                 //int c = 0;
                 InitializeComponent();
                 UpdateInvadersGrid();
-                UpdateFireTasks();
+                UpdateShipFireTasks();
+                UpdateInvadersFireTasks();
                 Update();
                
             // UpCheckCollision();
@@ -65,6 +69,42 @@ namespace wpfapp1
 
 
         }
+
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+
+        {
+
+            //using (FileStream fs = File.Open("C:\\Users\\matte\\source\\repos\\wpfapp1\\wpfapp1\\Images\\si1_2.png", FileMode.Open))
+            //{
+            //    BitmapImage bitmap = new BitmapImage(); bitmap.StreamSource = fs;
+            //    si1.Source = bitmap; //to do konvertera png till Bitmap
+            //    this.si1.Source = bitmap;      
+            //                }
+
+            if (e.Key == Key.Left)
+            {
+                ShipX--;
+
+
+            }
+            if (e.Key == Key.Right)
+            {
+                ShipX++;
+            }
+
+            if (e.Key == Key.Space && Fire == false)
+            {
+                Fire = true;
+                myLaser.Visibility = Visibility.Visible;
+                LaserX = ShipX;
+
+            }
+
+            Grid.SetColumn(myImage, ShipX);
+
+        }
+
 
         public void Laser()
         {
@@ -89,16 +129,58 @@ namespace wpfapp1
                 //myLaser.Visibility = Visibility.Hidden;
         }
 
-        private async void UpdateFireTasks()
+        private async void UpdateShipFireTasks()
         {
             while (true)
             {
                 await Task.Delay(50);
                 Laser();
-                CheckCollision(); //to do break vid träff kör nu flera gånger för varje förflyttning av sis
+                CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
             }
         }
+        private async void UpdateInvadersFireTasks()
+        {
+            while (true) 
+            {
+                await Task.Delay(100);
+                InvLaser();
+            }
+        }
+        
+        public void InvLaser() //to do skapa handler för att skapa ny Image
+        {
+         
+            if (InvFire)
+            {
+                InvFire = false;
+                Invlaser = new Image(); Invlaser.Name = "il";
+                string path = "/wpfapp1;component/Images/laser.png";
+                BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
+                Invlaser.Source = image;
+                Invlaser.Width = 30; Invlaser.Height = 30;
 
+                MyGrid.Children.Add(Invlaser);
+               
+                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                FireY = SpI.List[randomsi].PosY + 1;
+
+                Grid.SetColumn(Invlaser, SpI.List[randomsi].PosX);
+                
+            }
+         
+                if (FireY <= ShipY)
+                {
+                    Grid.SetRow(Invlaser, FireY++);
+                }
+                if(FireY > ShipY)
+                {
+                    
+                   MyGrid.Children.Remove(Invlaser);
+                   InvFire = true;
+                }
+           
+                    
+        }
         private async void Update()
         {
             while (true)
@@ -121,39 +203,7 @@ namespace wpfapp1
         //    //textblock.Text = DateTime.Now.ToLongTimeString();
         //}
      
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
-
-        {
-            
-            //using (FileStream fs = File.Open("C:\\Users\\matte\\source\\repos\\wpfapp1\\wpfapp1\\Images\\si1_2.png", FileMode.Open))
-            //{
-            //    BitmapImage bitmap = new BitmapImage(); bitmap.StreamSource = fs;
-            //    si1.Source = bitmap; //to do konvertera png till Bitmap
-            //    this.si1.Source = bitmap;      
-            //                }
-
-            if ( e.Key == Key.Left)
-            {
-                ShipX--;
-
-             
-            }
-            if (e.Key == Key.Right)
-            {
-                ShipX++;
-            }
-
-            if(e.Key == Key.Space && Fire == false)
-            {
-                Fire = true;
-                myLaser.Visibility = Visibility.Visible;
-                LaserX = ShipX;
-
-            }
-            
-            Grid.SetColumn(myImage, ShipX);
-            
-        }
+        
 
         public void UpdateInvaders(bool toggle) //toggle is for image
         {
@@ -229,49 +279,26 @@ namespace wpfapp1
                 {
                     count++;
 
-                    if (LaserY == item.PosY && LaserX == item.PosX && Toerase == null ) //Nextmove ska bara köra igen om spi rört sig
+                    if (LaserY == item.PosY && LaserX == item.PosX )//&& Toerase == null) //Nextmove ska bara köra igen om spi rört sig
                     {
                        Toerase = Images[count - 1];
-                       //Toerase = Images[count - 1].Visibility == Visibility.Visible ? Images[count - 1] : null;
+
                         if (Toerase != null)
                         {
-                        //Toerase.Visibility = Visibility.Hidden; // si hit control
-                                                                // myLaser.Visibility = Visibility.Hidden; // laser control
+                                                          
                             Fire = false;
                             Points++;
-                            myPoints.Text = "myPoints | " + Points; 
-                            //LaserY = 19;
-                            
-                            //Sitoerase = item;
-                     
-                          
-                           // to do funkar ej bilderna byter position varför? break löser det men fortfarande går inte inv till kanten
-                           SpI.List.Remove((GameObject)item); //tar bort object i invaders klassen
+                         
+                           SpI.List.Remove((GameObject)item); //tar bort object i invaders klassListan
                            Toerase.Visibility = Visibility.Hidden; 
                            Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
-                           
+                           myPoints.Text = Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
                            break;   
-                       
-                        //Toerase = null;
-                      
-                        //Toerase = null;
-                        //*break;
-                        
-                       
-                        //MyGrid.Children.Remove(toerase); // to do funkar ej bilderna byter position varför? break löser det men fortfarande går inte inv till kanten
-                        //SpI.List.Remove((GameObject)sitoerase);
-
                         }
                     
-                    //to do 
-
                 }
             }
 
-            //if (sitoerase != null)
-            //{
-            //    SpI.List.Remove((GameObject)sitoerase);
-            //}
         }
         
         public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
@@ -282,6 +309,15 @@ namespace wpfapp1
             SpI.InitEnemies();
             int count = 0;
             int row = 0;
+            TextBlock myTextBlock = new TextBlock();
+            myTextBlock.Name = "myPointPlayer";
+            Grid.SetColumn(myTextBlock, 2); 
+            Grid.SetRow(myTextBlock, 2);
+            myTextBlock.FontSize = 14;
+            //Color ? måste sättas
+            
+            
+            myTextBlock.Text = "jfksjajkfdska";
             Images = new List<Image>();
             foreach (var item in SpI.List.ToArray())
             {

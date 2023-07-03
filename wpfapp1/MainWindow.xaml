@@ -36,7 +36,7 @@
         <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="20" Grid.Column ="10" Width="60" Height="60" x:Name="myImage" ></Image>
         
         <!--<Image Source= "Images/si1_1.png" Grid.Row="0" Grid.Column ="0" Width="50" Height="50" x:Name="si1" ></Image>-->
-        <TextBlock x:Name="textblock" Grid.Row="2" Grid.Column="2">
+        <TextBlock x:Name="myPoints" Grid.Row="21" Grid.Column="0">
             <!--</StackPanel>-->
         </TextBlock>
         <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->

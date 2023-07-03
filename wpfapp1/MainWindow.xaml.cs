@@ -32,6 +32,11 @@ namespace wpfapp1
         public int LaserY = 19;
         public bool Fire = false;
         public bool SiHit = false;
+        public Image Toerase { get; set; }
+        public object Sitoerase { get; set; }
+        public int test;
+     
+        public int Points { get; set; } = 0;
         public Timer T { get; set; }
         public SpaceInvaders SpI { get; set; }
         public List<Image> Images { get; set; }
@@ -50,14 +55,15 @@ namespace wpfapp1
                 UpdateInvadersGrid();
                 UpdateFireTasks();
                 Update();
-                // UpCheckCollision();
+               
+            // UpCheckCollision();
 
-                //DispatcherTimer timer = new DispatcherTimer();
-                //timer.Interval = TimeSpan.FromSeconds(1);
-                //timer.Tick += timer_Tick;
-                //timer.Start();
-           
-            
+            //DispatcherTimer timer = new DispatcherTimer();
+            //timer.Interval = TimeSpan.FromSeconds(1);
+            //timer.Tick += timer_Tick;
+            //timer.Start();
+
+
         }
 
         public void Laser()
@@ -66,7 +72,7 @@ namespace wpfapp1
                 {
                     LaserY = 19;
                     Fire = false;
-                    Grid.SetRow(myLaser, LaserY);
+                    Grid.SetRow(myLaser, LaserY); //to do flyttas kanske till collision
                     Grid.SetColumn(myLaser, LaserX);
                     myLaser.Visibility = Visibility.Hidden;
 
@@ -101,8 +107,10 @@ namespace wpfapp1
                 await Task.Delay(800);
                 UpdateInvaders(invadertoggle);
                
+              
+
                 //SpI.DrawInvaders();
-               // UpdateInvaders(invadertoggle);
+                // UpdateInvaders(invadertoggle);
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
             }
@@ -153,63 +161,118 @@ namespace wpfapp1
             int count = 1;
             string name;
             object sitoerase = null;
+
+          
             SpI.UpdateInvaders(); //uppdaterar x och y horisontellt och radbyte
             
-             //ändrar grid värden(row, column) till x y ovan för imagescontrolls  
             
-                foreach (var item in SpI.List) 
+                //Image testi = (Image)MyGrid.FindName("si2");
+                //if (testi != null)
+                //{
+                //    testi.Source = null;
+                //}
+                //if (testi!= null) {Images.Remove(testi);
+                //MyGrid.Children.Remove(testi);} //tar bort
+            
+            
+            //ändrar grid värden(row, column) till x y ovan för imagescontrolls  
+            if (Toerase != null)
+            {
+               
+                //RemoveLogicalChild(Toerase);
+                //Images.Remove(Toerase); // > behövs inte möjligen för att det inte går att ta bort då elementen är i logical tree behöver isf vara i visual tree ? MyGrid.Children.Remove(Toerase);
+
+            }
+
+            foreach (var item in SpI.List)
                 {
-                    name = "si" + count;
-                    TextBlock testfind = (TextBlock)MyGrid.FindName("textblock");
-                    //Image foundimage = (Image)MyGrid.FindName(name); //returnerar imagecontrols
-                    Image foundimage = Images.Where(i => i.Name == name).FirstOrDefault(); //Image objekt behöver vara pekare ? 
-                    Grid.SetRow(foundimage, item.PosY);
-                    Grid.SetColumn(foundimage, item.PosX);
+                    
+                    name = "si" + count; //to do fungerar logiken ? när någon tagits bort? 
+
+                // * TextBlock testfind = (TextBlock)MyGrid.FindName("textblock");
+                // * Image foundimage = (Image)MyGrid.FindName(name); //returnerar imagecontrols
+
+                //Image foundimage = Images.Where(i => i.Name == name).FirstOrDefault(); 
+                //**?nedan
+                //if (Toerase != null) {
+                //    Toerase = null;
+                //    UIElementCollection col = (UIElementCollection)MyGrid.Children;
+                //    myPoints.Text = col.Count.ToString();
+                //    col.Remove(Toerase);
+                   
+                //}
+                Image foundimage = Images[SpI.List.IndexOf(item)];
+                    //if (foundimage.Source != null)
+                    //{
+                        Grid.SetRow(foundimage, item.PosY);
+                        Grid.SetColumn(foundimage, item.PosX);
+                    //}
                     path = toggle == true ? "/wpfapp1;component/Images/si1_2.png" : "/wpfapp1;component/Images/si1_1.png";
                     BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                     foundimage.Source = image;
                     //*done Collision behöver flyttas ut! och skapa en till update metod. annars kollas bara collision då de flyttas!
-                    count++;
+                
+                count++;
+
                 }
             
-          
+
             //Grid.SetRow(si1, InvX++)
         }
 
         public void CheckCollision()
         {
                
-                object sitoerase = null;
-                Image toerase = null;
+                Toerase = null;
                 int count = 0;
                 foreach (var item in SpI.List)
                 {
                     count++;
 
-                    if (LaserY == item.PosY && LaserX == item.PosX & toerase == null)
+                    if (LaserY == item.PosY && LaserX == item.PosX && Toerase == null ) //Nextmove ska bara köra igen om spi rört sig
                     {
-                        toerase = Images[count - 1].Visibility == Visibility.Visible ? Images[count - 1] : null;
-                        if (toerase != null)
+                       Toerase = Images[count - 1];
+                       //Toerase = Images[count - 1].Visibility == Visibility.Visible ? Images[count - 1] : null;
+                        if (Toerase != null)
                         {
-                            toerase.Visibility = Visibility.Hidden; // si hit control
-                                                                    // myLaser.Visibility = Visibility.Hidden; // laser control
+                        //Toerase.Visibility = Visibility.Hidden; // si hit control
+                                                                // myLaser.Visibility = Visibility.Hidden; // laser control
                             Fire = false;
+                            Points++;
+                            myPoints.Text = "myPoints | " + Points; 
                             //LaserY = 19;
                             
-                            //sitoerase = item;
-                            //MyGrid.Children.Remove(toerase); //funkar ej bilderna byter position varför?!
-                            
+                            //Sitoerase = item;
+                     
+                          
+                           // to do funkar ej bilderna byter position varför? break löser det men fortfarande går inte inv till kanten
+                           SpI.List.Remove((GameObject)item); //tar bort object i invaders klassen
+                           Toerase.Visibility = Visibility.Hidden; 
+                           Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
+                           
+                           break;   
+                       
+                        //Toerase = null;
+                      
+                        //Toerase = null;
+                        //*break;
+                        
+                       
+                        //MyGrid.Children.Remove(toerase); // to do funkar ej bilderna byter position varför? break löser det men fortfarande går inte inv till kanten
+                        //SpI.List.Remove((GameObject)sitoerase);
+
                         }
-                        //to do 
+                    
+                    //to do 
 
-                    }
-                }
-
-                if (sitoerase != null)
-                {
-                    SpI.List.Remove((GameObject)sitoerase);
                 }
             }
+
+            //if (sitoerase != null)
+            //{
+            //    SpI.List.Remove((GameObject)sitoerase);
+            //}
+        }
         
         public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
         {

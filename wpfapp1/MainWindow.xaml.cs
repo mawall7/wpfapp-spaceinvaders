@@ -24,6 +24,7 @@ namespace wpfapp1
     /// </summary>
     public partial class MainWindow: Window
     {
+        public bool GameIsRunning = true;
         public bool invadertoggle = false;
         public int ShipX = 10;
         public int InvX = 0;
@@ -211,6 +212,11 @@ namespace wpfapp1
                     RemoveShipLaser();
                     myPoints.Text = "Success!";
                 }
+                if (!GameIsRunning)
+                {
+                    GameOverTxt.Visibility = Visibility.Visible; 
+                    break; 
+                }
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
             }
@@ -282,6 +288,7 @@ namespace wpfapp1
                 if(InvFireY == ShipY && InvFireX == ShipX)
                 {
                     RemoveShip();
+                    GameIsRunning = false;
                 }
 
 
@@ -296,6 +303,7 @@ namespace wpfapp1
         public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
         {
             //skapa rows and columns 
+            
             string path = "/wpfapp1;component/Images/si1_2.png";
             SpI = new SpaceInvaders(22, SpaceInvaders.Typeui.WpfApp);
             SpI.InitEnemies();

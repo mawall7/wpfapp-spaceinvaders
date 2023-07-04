@@ -42,7 +42,8 @@
         <TextBlock x:Name="myPoints" Grid.Row="1" Grid.Column="0" Width="200" Height="100" FontSize="12">
             <!--</StackPanel>-->
         </TextBlock>
-        <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->
+        <TextBlock x:Name="GameOverTxt" Grid.Row="14" Grid.Column="12" FontSize="50" Foreground="White" FontWeight="Bold" Margin="-120" Visibility="Hidden">Game Over</TextBlock>
+            <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->
     </Grid>
 
 </Window>

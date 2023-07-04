@@ -59,14 +59,7 @@ namespace wpfapp1
                 UpdateShipFireTasks();
                 UpdateInvadersFireTasks();
                 Update();
-               
-            // UpCheckCollision();
-
-            //DispatcherTimer timer = new DispatcherTimer();
-            //timer.Interval = TimeSpan.FromSeconds(1);
-            //timer.Tick += timer_Tick;
-            //timer.Start();
-
+             
 
         }
 
@@ -75,22 +68,18 @@ namespace wpfapp1
 
         {
 
-            //using (FileStream fs = File.Open("C:\\Users\\matte\\source\\repos\\wpfapp1\\wpfapp1\\Images\\si1_2.png", FileMode.Open))
-            //{
-            //    BitmapImage bitmap = new BitmapImage(); bitmap.StreamSource = fs;
-            //    si1.Source = bitmap; //to do konvertera png till Bitmap
-            //    this.si1.Source = bitmap;      
-            //                }
-
-            if (e.Key == Key.Left)
+     
+            if (e.Key == Key.Left && ShipX > 0)
             {
                 ShipX--;
+                Grid.SetColumn(myImage, ShipX);
 
 
             }
-            if (e.Key == Key.Right)
+            if (e.Key == Key.Right && ShipX <= 200)
             {
                 ShipX++;
+                Grid.SetColumn(myImage, ShipX);
             }
 
             if (e.Key == Key.Space && Fire == false)
@@ -98,10 +87,11 @@ namespace wpfapp1
                 Fire = true;
                 myLaser.Visibility = Visibility.Visible;
                 LaserX = ShipX;
+                
 
             }
 
-            Grid.SetColumn(myImage, ShipX);
+            
 
         }
 
@@ -190,18 +180,12 @@ namespace wpfapp1
                 UpdateInvaders(invadertoggle);
                
               
-
-                //SpI.DrawInvaders();
-                // UpdateInvaders(invadertoggle);
+                
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
             }
         }
-        //void timer_Tick(object sender, EventArgs e)
-        //{
-        //    //UpdateInvaders();
-        //    //textblock.Text = DateTime.Now.ToLongTimeString();
-        //}
+      
      
         
 
@@ -216,41 +200,23 @@ namespace wpfapp1
             SpI.UpdateInvaders(); //uppdaterar x och y horisontellt och radbyte
             
             
-                //Image testi = (Image)MyGrid.FindName("si2");
-                //if (testi != null)
-                //{
-                //    testi.Source = null;
-                //}
-                //if (testi!= null) {Images.Remove(testi);
-                //MyGrid.Children.Remove(testi);} //tar bort
+         
             
             
             //ändrar grid värden(row, column) till x y ovan för imagescontrolls  
             if (Toerase != null)
             {
                
-                //RemoveLogicalChild(Toerase);
-                //Images.Remove(Toerase); // > behövs inte möjligen för att det inte går att ta bort då elementen är i logical tree behöver isf vara i visual tree ? MyGrid.Children.Remove(Toerase);
+               
 
             }
 
             foreach (var item in SpI.List)
                 {
                     
-                    name = "si" + count; //to do fungerar logiken ? när någon tagits bort? 
+                    name = "si" + count;  
 
-                // * TextBlock testfind = (TextBlock)MyGrid.FindName("textblock");
-                // * Image foundimage = (Image)MyGrid.FindName(name); //returnerar imagecontrols
-
-                //Image foundimage = Images.Where(i => i.Name == name).FirstOrDefault(); 
-                //**?nedan
-                //if (Toerase != null) {
-                //    Toerase = null;
-                //    UIElementCollection col = (UIElementCollection)MyGrid.Children;
-                //    myPoints.Text = col.Count.ToString();
-                //    col.Remove(Toerase);
-                   
-                //}
+               
                 Image foundimage = Images[SpI.List.IndexOf(item)];
                     //if (foundimage.Source != null)
                     //{
@@ -260,14 +226,13 @@ namespace wpfapp1
                     path = toggle == true ? "/wpfapp1;component/Images/si1_2.png" : "/wpfapp1;component/Images/si1_1.png";
                     BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                     foundimage.Source = image;
-                    //*done Collision behöver flyttas ut! och skapa en till update metod. annars kollas bara collision då de flyttas!
+                    
                 
                 count++;
 
                 }
             
-
-            //Grid.SetRow(si1, InvX++)
+                       
         }
 
         public void CheckCollision()
@@ -327,7 +292,7 @@ namespace wpfapp1
                 BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                 ImageControl.Source = image;
                 ImageControl.Width = 30; ImageControl.Height = 30;
-                Images.Add(ImageControl); // skriv in i SpaceInvaders class istället?
+                Images.Add(ImageControl); // to do skriv in i SpaceInvaders class istället?
                 //row = count < 10 ? row : ; 
                 Grid.SetRow(ImageControl, item.PosY);
                 Grid.SetColumn(ImageControl, item.PosX);

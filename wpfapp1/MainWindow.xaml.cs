@@ -34,7 +34,9 @@ namespace wpfapp1
         public bool Fire = false;
         public bool SiHit = false;
         public bool InvFire = true;
-        int FireY { get; set; }
+        int InvFireX { get; set; }
+        int InvFireY { get; set; }
+        
         public Image Toerase { get; set; } = null;
         public object Sitoerase { get; set; }
         public int test;
@@ -72,14 +74,14 @@ namespace wpfapp1
             if (e.Key == Key.Left && ShipX > 0)
             {
                 ShipX--;
-                Grid.SetColumn(myImage, ShipX);
+                Grid.SetColumn(myShip, ShipX);
 
 
             }
             if (e.Key == Key.Right && ShipX <= 200)
             {
                 ShipX++;
-                Grid.SetColumn(myImage, ShipX);
+                Grid.SetColumn(myShip, ShipX);
             }
 
             if (e.Key == Key.Space && Fire == false)
@@ -143,6 +145,7 @@ namespace wpfapp1
             {
                 await Task.Delay(100);
                 InvLaser();
+                CheckCollision();
             }
            
         }
@@ -172,18 +175,19 @@ namespace wpfapp1
                 MyGrid.Children.Add(Invlaser);
                
                 Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
-                FireY = SpI.List[randomsi].PosY + 1;
+                InvFireY = SpI.List[randomsi].PosY + 1;
+                InvFireX = SpI.List[randomsi].PosX;
 
                 Grid.SetColumn(Invlaser, SpI.List[randomsi].PosX);
                 
             }
           
 
-            if (FireY <= ShipY)
+            if (InvFireY <= ShipY)
             {
-                Grid.SetRow(Invlaser, FireY++);
+                Grid.SetRow(Invlaser, InvFireY++);
             }
-            if(FireY > ShipY)
+            if(InvFireY > ShipY)
             {
                     
                 MyGrid.Children.Remove(Invlaser);
@@ -201,7 +205,12 @@ namespace wpfapp1
                 UpdateInvaders(invadertoggle);
 
 
-                if (SpI.List.Count == 0) { RemoveInvLaser(); RemoveShipLaser(); }
+                if (SpI.List.Count == 0) 
+                {
+                    RemoveInvLaser();
+                    RemoveShipLaser();
+                    myPoints.Text = "Success!";
+                }
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
             }
@@ -267,10 +276,23 @@ namespace wpfapp1
                         }
                     
                 }
+
             }
 
+                if(InvFireY == ShipY && InvFireX == ShipX)
+                {
+                    RemoveShip();
+                }
+
+
+
         }
-        
+
+        private void RemoveShip()
+        {
+            MyGrid.Children.Remove(myShip);
+        }
+
         public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
         {
             //skapa rows and columns 

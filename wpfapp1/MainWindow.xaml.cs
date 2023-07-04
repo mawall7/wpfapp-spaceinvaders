@@ -59,7 +59,7 @@ namespace wpfapp1
                 UpdateShipFireTasks();
                 UpdateInvadersFireTasks();
                 Update();
-             
+               
 
         }
 
@@ -121,7 +121,7 @@ namespace wpfapp1
 
         private async void UpdateShipFireTasks()
         {
-            while (true)
+            while (SpI.List.Count > 0)
             {
                 await Task.Delay(50);
                 Laser();
@@ -130,7 +130,7 @@ namespace wpfapp1
         }
         private async void UpdateInvadersFireTasks()
         {
-            while (true) 
+            while (SpI.List.Count > 0) 
             {
                 await Task.Delay(100);
                 InvLaser();
@@ -140,7 +140,8 @@ namespace wpfapp1
         public void InvLaser() //to do skapa handler för att skapa ny Image
         {
          
-            if (InvFire)
+            if (InvFire && SpI.List.Count > 0)
+
             {
                 InvFire = false;
                 Invlaser = new Image(); Invlaser.Name = "il";
@@ -173,7 +174,7 @@ namespace wpfapp1
         }
         private async void Update()
         {
-            while (true)
+            while (SpI.List.Count!=0)
             {
                 invadertoggle = !invadertoggle;
                 await Task.Delay(800);
@@ -196,43 +197,27 @@ namespace wpfapp1
             string name;
             object sitoerase = null;
 
-          
+            
             SpI.UpdateInvaders(); //uppdaterar x och y horisontellt och radbyte
-            
-            
          
-            
-            
-            //ändrar grid värden(row, column) till x y ovan för imagescontrolls  
-            if (Toerase != null)
-            {
-               
-               
-
-            }
-
             foreach (var item in SpI.List)
                 {
                     
                     name = "si" + count;  
 
-               
-                Image foundimage = Images[SpI.List.IndexOf(item)];
-                    //if (foundimage.Source != null)
-                    //{
-                        Grid.SetRow(foundimage, item.PosY);
-                        Grid.SetColumn(foundimage, item.PosX);
-                    //}
+                    Image foundimage = Images[SpI.List.IndexOf(item)];
+                  
+                    Grid.SetRow(foundimage, item.PosY);
+                    Grid.SetColumn(foundimage, item.PosX);
+                  
                     path = toggle == true ? "/wpfapp1;component/Images/si1_2.png" : "/wpfapp1;component/Images/si1_1.png";
                     BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                     foundimage.Source = image;
-                    
-                
-                count++;
+                                 
+                    count++;
 
                 }
-            
-                       
+                   
         }
 
         public void CheckCollision()

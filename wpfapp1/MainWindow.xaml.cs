@@ -26,6 +26,7 @@ namespace wpfapp1
     {
         public bool GameIsRunning = true;
         public bool invadertoggle = false;
+        public bool Toogle { get; set; } = false;
         public int ShipX = 10;
         public int InvX = 0;
         public int InvY = 0;
@@ -134,11 +135,24 @@ namespace wpfapp1
             while (SpI.List.Count > 0)
             {
                 await Task.Delay(50);
+                AfterBurner();
                 Laser();
                 CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
+                
             }
             
         }
+
+        private void AfterBurner()
+        {
+            Toogle = !Toogle;
+            string path = Toogle ? "/wpfapp1;component/Images/niceship2.png" : "/wpfapp1;component/Images/niceship1.png";
+            myShip.BeginInit();
+            BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
+            myShip.EndInit();
+            myShip.Source = image;
+        }
+
         private async void UpdateInvadersFireTasks()
         {
             

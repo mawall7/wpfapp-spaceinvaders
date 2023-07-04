@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Remove="Images\bird.GIF" />
     <None Remove="Images\laser.png" />
+    <None Remove="Images\niceship1.png" />
+    <None Remove="Images\niceship2.png" />
     <None Remove="Images\si1_1.png" />
     <None Remove="Images\si1_2.png" />
     <None Remove="Images\Space-Invaders-Ship.png" />
@@ -29,6 +31,8 @@
 
   <ItemGroup>
     <Resource Include="Images\laser.png" />
+    <Resource Include="Images\niceship1.png" />
+    <Resource Include="Images\niceship2.png" />
     <Resource Include="Images\si1_1.png" />
     <Resource Include="Images\si1_2.png" />
     <Resource Include="Images\Space-Invaders-Ship.png" />

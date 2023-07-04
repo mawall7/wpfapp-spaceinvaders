@@ -23,7 +23,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
+        
+        
 
         <!--en kontroll med attached property som läggs till av griden själv. griden flyttar därmed controll innehållet till en rad eller kolumn-->
         <!--<ListBox Grid.Row="2" x:Name="lstNames"/>-->
@@ -36,12 +37,8 @@
         <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="19" Grid.Column ="10" Width="60" Height="60"  Margin="-15" x:Name="myShip" ></Image>
         
         <!--<Image Source= "Images/si1_1.png" Grid.Row="0" Grid.Column ="0" Width="50" Height="50" x:Name="si1" ></Image>-->
-        <TextBlock  Grid.Row="0" Grid.Column="0" Width="200" Height="100" FontSize="12">
-            <!--</StackPanel>-->points
-        </TextBlock>
-        <TextBlock x:Name="myPoints" Grid.Row="1" Grid.Column="0" Width="200" Height="100" FontSize="12">
-            <!--</StackPanel>-->
-        </TextBlock>
+        <!--<TextBlock  Grid.Row="14" Grid.Column="12" Width="200" Height="100" FontSize="20" Margin="-15">Points:</TextBlock>-->
+        <TextBlock x:Name="myPoints" Grid.Row="2" Grid.Column="11" Width="200" Height="100" FontSize="20" Margin="-30">Points 0</TextBlock>
         <TextBlock x:Name="GameOverTxt" Grid.Row="14" Grid.Column="12" FontSize="50" Foreground="White" FontWeight="Bold" Margin="-120" Visibility="Hidden">Game Over</TextBlock>
             <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->
     </Grid>

@@ -224,7 +224,7 @@ namespace wpfapp1
                 {
                     RemoveInvLaser();
                     RemoveShipLaser();
-                    myPoints.Text = "Success!";
+                    GameOverTxt.Text = "Success!";
                 }
                 if (!GameIsRunning)
                 {
@@ -291,7 +291,7 @@ namespace wpfapp1
                            SpI.List.Remove((GameObject)item); //tar bort object i invaders klassListan
                            Toerase.Visibility = Visibility.Hidden; 
                            Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
-                           myPoints.Text = Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
+                           myPoints.Text = "Points:" + Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
                            break;   
                         }
                     

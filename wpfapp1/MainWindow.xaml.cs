@@ -56,10 +56,10 @@ namespace wpfapp1
                 //int c = 0;
                 InitializeComponent();
                 UpdateInvadersGrid();
-                UpdateShipFireTasks();
+                UpdateShipFireTasks(); 
                 UpdateInvadersFireTasks();
                 Update();
-               
+                
 
         }
 
@@ -94,7 +94,11 @@ namespace wpfapp1
             
 
         }
-
+        private void RemoveShipLaser()
+        {
+            MyGrid.Children.Remove(myLaser);
+            myLaser.Visibility = Visibility.Hidden;
+        }
 
         public void Laser()
         {
@@ -106,7 +110,7 @@ namespace wpfapp1
                     Grid.SetColumn(myLaser, LaserX);
                     myLaser.Visibility = Visibility.Hidden;
 
-            } 
+                } 
             
                 if (Fire)
                 {
@@ -114,6 +118,8 @@ namespace wpfapp1
                     Grid.SetColumn(myLaser, LaserX);
                     
                 }
+                
+
                  
 
                 //myLaser.Visibility = Visibility.Hidden;
@@ -121,22 +127,35 @@ namespace wpfapp1
 
         private async void UpdateShipFireTasks()
         {
+           
             while (SpI.List.Count > 0)
             {
                 await Task.Delay(50);
                 Laser();
                 CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
             }
+            
         }
         private async void UpdateInvadersFireTasks()
         {
+            
             while (SpI.List.Count > 0) 
             {
                 await Task.Delay(100);
                 InvLaser();
             }
+           
         }
-        
+
+        private void RemoveInvLaser()
+        {
+            if (Invlaser != null)
+            {
+                MyGrid.Children.Remove(Invlaser);
+                Invlaser.Visibility = Visibility.Hidden;
+            }
+        }
+
         public void InvLaser() //to do skapa handler för att skapa ny Image
         {
          
@@ -158,17 +177,18 @@ namespace wpfapp1
                 Grid.SetColumn(Invlaser, SpI.List[randomsi].PosX);
                 
             }
-         
-                if (FireY <= ShipY)
-                {
-                    Grid.SetRow(Invlaser, FireY++);
-                }
-                if(FireY > ShipY)
-                {
+          
+
+            if (FireY <= ShipY)
+            {
+                Grid.SetRow(Invlaser, FireY++);
+            }
+            if(FireY > ShipY)
+            {
                     
-                   MyGrid.Children.Remove(Invlaser);
-                   InvFire = true;
-                }
+                MyGrid.Children.Remove(Invlaser);
+                InvFire = true;
+            }
            
                     
         }
@@ -179,9 +199,9 @@ namespace wpfapp1
                 invadertoggle = !invadertoggle;
                 await Task.Delay(800);
                 UpdateInvaders(invadertoggle);
-               
-              
-                
+
+
+                if (SpI.List.Count == 0) { RemoveInvLaser(); RemoveShipLaser(); }
                 //textblock.Text = DateTime.Now.ToLongTimeString();
 
             }

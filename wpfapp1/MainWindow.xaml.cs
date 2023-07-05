@@ -300,11 +300,11 @@ namespace wpfapp1
                         myShip.Visibility = toggle ? Visibility.Visible : Visibility.Hidden;
                         toggle = !toggle;
                     }
-                    count = 0;
                     
                     if (count == 8)
                     {
-                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible;
+                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power {Hp.ToString()}"; 
+                        count = 0;
                     }
                 }
            

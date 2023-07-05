@@ -45,7 +45,7 @@ namespace wpfapp1
      
         public int Points { get; set; } = 0;
         public Timer T { get; set; }
-        public SpaceInvaders SpI { get; set; }
+        public SpaceInvaders2 SpI { get; set; }
         public List<Image> Images { get; set; }
       
         private Image Invlaser { get; set; }
@@ -314,28 +314,11 @@ namespace wpfapp1
             MyGrid.Children.Remove(myShip);
         }
 
-        public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
+        public void WriteInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
         {
-            //skapa rows and columns 
-            
-            string path = "/wpfapp1;component/Images/si1_2.png";
-            SpI = new SpaceInvaders(22, SpaceInvaders.Typeui.WpfApp);
-            SpI.InitEnemies();
-            int count = 0;
-            int row = 0;
-            TextBlock myTextBlock = new TextBlock();
-            myTextBlock.Name = "myPointPlayer";
-            Grid.SetColumn(myTextBlock, 2); 
-            Grid.SetRow(myTextBlock, 2);
-            myTextBlock.FontSize = 14;
-            //Color ? måste sättas
-            
-            
-            myTextBlock.Text = "jfksjajkfdska";
-            Images = new List<Image>();
             foreach (var item in SpI.List.ToArray())
             {
-                count++;
+                count++; //? = noll i klass
                 var contrtag = "si" + count; //Name prop
                 var ImageControl = new Image(); ImageControl.Name = contrtag;
                 BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
@@ -348,8 +331,53 @@ namespace wpfapp1
                 MyGrid.RowDefinitions.Add(new RowDefinition());
                 MyGrid.ColumnDefinitions.Add(new ColumnDefinition());
                 MyGrid.Children.Add(ImageControl);
-                
+
             }
+        }
+
+            public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
+        {
+            //skapa rows and columns 
+
+            //string path = "/wpfapp1;component/Images/si1_2.png"; //ok
+            //SpI = new SpaceInvaders(22, SpaceInvaders.Typeui.WpfApp); //? ändra till arv
+            SpI = new SpaceInvaders2(22, SpaceInvaders.Typeui.WpfApp);
+            
+            SpI.InitEnemies(); //ok
+            SpI.List.Count();
+            int count = 0; // ?
+            int row = 0; // ?
+            TextBlock myTextBlock = new TextBlock();
+            myTextBlock.Name = "myPointPlayer";
+            Grid.SetColumn(myTextBlock, 2); 
+            Grid.SetRow(myTextBlock, 2);
+            myTextBlock.FontSize = 14;
+            //Color ? måste sättas
+            
+            myTextBlock.Text = "jfksjajkfdska";
+            Images = new List<Image>(); //ok ?  
+
+            //WriteInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
+            SpI.DrawInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
+            Images = SpI.Images; //private ?  
+            //     )
+            //foreach (var item in SpI.List.ToArray())
+            //{
+            //    count++; //? = noll i klass
+            //    var contrtag = "si" + count; //Name prop
+            //    var ImageControl = new Image(); ImageControl.Name = contrtag;
+            //    BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
+            //    ImageControl.Source = image;
+            //    ImageControl.Width = 30; ImageControl.Height = 30;
+            //    Images.Add(ImageControl); // to do skriv in i SpaceInvaders class istället?
+            //    //row = count < 10 ? row : ; 
+            //    Grid.SetRow(ImageControl, item.PosY);
+            //    Grid.SetColumn(ImageControl, item.PosX);
+            //    MyGrid.RowDefinitions.Add(new RowDefinition());
+            //    MyGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            //    MyGrid.Children.Add(ImageControl);
+                
+            //}
 
         }
            

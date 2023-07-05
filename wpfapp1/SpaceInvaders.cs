@@ -11,18 +11,10 @@ namespace wpfapp1
     public class SpaceInvaders2:SpaceInvaders
     {
         public List<Image> Images { get; set; }
-       
-        //public enum Typeui
-        //{
-        //    Console,
-        //    WpfApp
-        //}
+
         public SpaceInvaders2(int windowwidth, Typeui ui = Typeui.WpfApp) : base(windowwidth, (SpaceInvaders.Typeui)ui)
         {
-            
         }
-
-        
         public void DrawInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
         {
             Images = new List<Image>();

@@ -15,26 +15,30 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Windows.Threading;
 using spaceinvaders;
-
+using System.Threading;
 
 namespace wpfapp1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow: Window
+    public partial class MainWindow : Window
     {
+        public bool Toogle { get; set; } = false;
         public bool GameIsRunning = true;
         public bool invadertoggle = false;
-        public bool Toogle { get; set; } = false;
+
         public int ShipX = 10;
+        public int ShipY = 20;
+        public bool Shiptoggle = false;
+        public int count = 0;
+        public int Hp { get; set; } = 3;
         public int InvX = 0;
         public int InvY = 0;
         public int LaserX;
-        public int ShipY = 20;
         public int LaserY = 19;
         public bool Fire = false;
-        public bool SiHit = false;
+        public bool isHit { get; set; } = false;
         public bool InvFire = true;
         int InvFireX { get; set; }
         int InvFireY { get; set; }
@@ -54,17 +58,16 @@ namespace wpfapp1
 
         public MainWindow()
         {
-             
-            
-                //bool update = true;
-                //int c = 0;
+               
                 InitializeComponent();
                 UpdateInvadersGrid();
                 UpdateShipFireTasks(); 
                 UpdateInvadersFireTasks();
                 Update();
+                ShipHit(Shiptoggle); 
+                //if (!GameIsRunning) { RemoveShip(); }
+               
                 
-
         }
 
 
@@ -91,11 +94,7 @@ namespace wpfapp1
                 Fire = true;
                 myLaser.Visibility = Visibility.Visible;
                 LaserX = ShipX;
-                
-
             }
-
-            
 
         }
         private void RemoveShipLaser()
@@ -122,11 +121,6 @@ namespace wpfapp1
                     Grid.SetColumn(myLaser, LaserX);
                     
                 }
-                
-
-                 
-
-                //myLaser.Visibility = Visibility.Hidden;
         }
 
         private async void UpdateShipFireTasks()
@@ -138,9 +132,7 @@ namespace wpfapp1
                 AfterBurner();
                 Laser();
                 CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
-                
             }
-            
         }
 
         private void AfterBurner()
@@ -162,7 +154,6 @@ namespace wpfapp1
                 InvLaser();
                 CheckCollision();
             }
-           
         }
 
         private void RemoveInvLaser()
@@ -197,7 +188,6 @@ namespace wpfapp1
                 
             }
           
-
             if (InvFireY <= ShipY)
             {
                 Grid.SetRow(Invlaser, InvFireY++);
@@ -208,8 +198,6 @@ namespace wpfapp1
                 MyGrid.Children.Remove(Invlaser);
                 InvFire = true;
             }
-           
-                    
         }
         private async void Update()
         {
@@ -218,7 +206,8 @@ namespace wpfapp1
                 invadertoggle = !invadertoggle;
                 await Task.Delay(800);
                 UpdateInvaders(invadertoggle);
-
+                
+                //if (!GameIsRunning) { RemoveShip(invadertoggle); }
 
                 if (SpI.List.Count == 0) 
                 {
@@ -231,14 +220,10 @@ namespace wpfapp1
                     GameOverTxt.Visibility = Visibility.Visible; 
                     break; 
                 }
-                //textblock.Text = DateTime.Now.ToLongTimeString();
-
+             
             }
         }
       
-     
-        
-
         public void UpdateInvaders(bool toggle) //toggle is for image
         {
             string path;
@@ -266,7 +251,6 @@ namespace wpfapp1
                     count++;
 
                 }
-                   
         }
 
         public void CheckCollision()
@@ -284,7 +268,6 @@ namespace wpfapp1
 
                         if (Toerase != null)
                         {
-                                                          
                             Fire = false;
                             Points++;
                          
@@ -294,25 +277,44 @@ namespace wpfapp1
                            myPoints.Text = "Points:" + Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
                            break;   
                         }
-                    
                 }
 
             }
-
                 if(InvFireY == ShipY && InvFireX == ShipX)
                 {
-                    RemoveShip();
-                    GameIsRunning = false;
+                     isHit = true;
+                    //RemoveShip();
+                    //GameIsRunning = false;
                 }
-
-
-
         }
 
-        private void RemoveShip()
+        private async void ShipHit(bool toggle)
         {
-            MyGrid.Children.Remove(myShip);
+                while (true)
+                {
+                    await Task.Delay(500);
+                
+                if (isHit && count < 8) 
+                    {
+                        count++;
+                        myShip.Visibility = toggle ? Visibility.Visible : Visibility.Hidden;
+                        toggle = !toggle;
+                    }
+                    count = 0;
+                    
+                    if (count == 8)
+                    {
+                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible;
+                    }
+                }
+           
         }
+                    
+                     
+                    
+                     
+                
+
 
         public void WriteInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
         {
@@ -337,10 +339,7 @@ namespace wpfapp1
 
             public void UpdateInvadersGrid() //obs bilder högerklicka > välj properties build action > ändra None > resources 
         {
-            //skapa rows and columns 
-
-            //string path = "/wpfapp1;component/Images/si1_2.png"; //ok
-            //SpI = new SpaceInvaders(22, SpaceInvaders.Typeui.WpfApp); //? ändra till arv
+            
             SpI = new SpaceInvaders2(22, SpaceInvaders.Typeui.WpfApp);
             
             SpI.InitEnemies(); //ok
@@ -357,27 +356,9 @@ namespace wpfapp1
             myTextBlock.Text = "jfksjajkfdska";
             Images = new List<Image>(); //ok ?  
 
-            //WriteInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
             SpI.DrawInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
-            Images = SpI.Images; //private ?  
-            //     )
-            //foreach (var item in SpI.List.ToArray())
-            //{
-            //    count++; //? = noll i klass
-            //    var contrtag = "si" + count; //Name prop
-            //    var ImageControl = new Image(); ImageControl.Name = contrtag;
-            //    BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
-            //    ImageControl.Source = image;
-            //    ImageControl.Width = 30; ImageControl.Height = 30;
-            //    Images.Add(ImageControl); // to do skriv in i SpaceInvaders class istället?
-            //    //row = count < 10 ? row : ; 
-            //    Grid.SetRow(ImageControl, item.PosY);
-            //    Grid.SetColumn(ImageControl, item.PosX);
-            //    MyGrid.RowDefinitions.Add(new RowDefinition());
-            //    MyGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            //    MyGrid.Children.Add(ImageControl);
-                
-            //}
+            Images = SpI.Images; 
+           
 
         }
            

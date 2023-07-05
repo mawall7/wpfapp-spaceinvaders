@@ -63,13 +63,19 @@ namespace wpfapp1
                 UpdateInvadersGrid();
                 UpdateShipFireTasks(); 
                 UpdateInvadersFireTasks();
-                Update();
-                ShipHit(Shiptoggle); 
-                //if (!GameIsRunning) { RemoveShip(); }
+                if (GameIsRunning)
+                {
+                    Update();
+                    ShipHit(Shiptoggle);
+                }
                
                 
         }
 
+        private void RemoveShip()
+        {
+            MyGrid.Children.Remove(myShip);
+        }
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
 
@@ -217,7 +223,8 @@ namespace wpfapp1
                 }
                 if (!GameIsRunning)
                 {
-                    GameOverTxt.Visibility = Visibility.Visible; 
+                    GameOverTxt.Visibility = Visibility.Visible;
+                    MyGrid.Children.Remove(myShip);
                     break; 
                 }
              
@@ -304,9 +311,10 @@ namespace wpfapp1
                     if (count == 8)
                     {
                         Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power {Hp.ToString()}"; 
-                        count = 0;
+                        count = 0; 
                     }
-                }
+                    if(Hp == 0) GameIsRunning = false;
+            }
            
         }
                     

@@ -32,6 +32,8 @@ namespace wpfapp1
         public int ShipY = 20;
         public bool Shiptoggle = false;
         public int count = 0;
+        public bool isintro = true;
+        public int introcount = 8;
         public int Hp { get; set; } = 3;
         public int InvX = 0;
         public int InvY = 0;
@@ -60,13 +62,16 @@ namespace wpfapp1
         {
                
                 InitializeComponent();
+                
                 UpdateInvadersGrid();
                 UpdateShipFireTasks(); 
                 UpdateInvadersFireTasks();
+                ShipAnimation();
                 if (GameIsRunning)
                 {
                     Update();
                     ShipHit(Shiptoggle);
+                    
                 }
                
                 
@@ -310,21 +315,31 @@ namespace wpfapp1
                     
                     if (count == 8)
                     {
-                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power {Hp.ToString()}"; 
+                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power:{Hp.ToString()}"; 
                         count = 0; 
                     }
                     if(Hp == 0) GameIsRunning = false;
             }
-           
         }
-                    
-                     
-                    
-                     
-                
+
+        public async void ShipAnimation()
+        {
+            while (true)
+            {
+                await Task.Delay(100);
+
+                if (introcount > 0)
+                {
+                    introcount--;
+                    myShip.Width = myShip.Width - 50; myShip.Height = myShip.Height - 50;
+                }
+                if (introcount == 0) { myShip.Width = 80; myShip.Height = 80; }
+            }
+        }
 
 
-        public void WriteInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
+
+            public void WriteInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
         {
             foreach (var item in SpI.List.ToArray())
             {
@@ -365,9 +380,10 @@ namespace wpfapp1
             Images = new List<Image>(); //ok ?  
 
             SpI.DrawInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
-            Images = SpI.Images; 
-           
+            Images = SpI.Images;
 
+            //to do flytta till initmetod eller byt namn tillhör ej spaceinvaders utan ship
+            //myShip.Height = 500; myShip.Width = 500;
         }
            
     }

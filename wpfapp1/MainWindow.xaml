@@ -23,25 +23,15 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        
-
-        <!--en kontroll med attached property som läggs till av griden själv. griden flyttar därmed controll innehållet till en rad eller kolumn-->
-        <!--<ListBox Grid.Row="2" x:Name="lstNames"/>-->
-        <!--<StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
-            <TextBox x:Name="txtName"/>
-            <Button x:Name="btnAdd" Margin="0,5,0,0"  Click="ButtonAddName_Click">Add Name....</Button>
-            -->
-        <!--<Polygon Points="1,2,30,30,1,3" x:Name="myPoly" FillRule="EvenOdd" Fill="Black"></Polygon>-->
+              
         <Image Source= "Images/laser.png" Grid.Row="19" Grid.Column ="10" Width="60" Height="60" x:Name="myLaser" Visibility="Hidden"></Image>
-        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="19" Grid.Column ="10" Width="60" Height="60"  Margin="-15" x:Name="myShip" ></Image>
+
+        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="17" Grid.Column ="10" Margin="-500" Width="500" Height="500"  x:Name="myShip" ></Image>
         
-        <!--<Image Source= "Images/si1_1.png" Grid.Row="0" Grid.Column ="0" Width="50" Height="50" x:Name="si1" ></Image>-->
-        <!--<TextBlock  Grid.Row="14" Grid.Column="12" Width="200" Height="100" FontSize="20" Margin="-15">Points:</TextBlock>-->
-        <TextBlock x:Name="myPoints" Grid.Row="20" Grid.Column="13" Width="200" Height="100" FontSize="20" Margin="-20">Points 0</TextBlock>
-        <TextBlock x:Name="Health" Grid.Row="21" Grid.Column="3" Width="200" Height="100" FontSize="20" Margin="-30">Power 3</TextBlock>
+        <TextBlock x:Name="myPoints" Grid.Row="20" Grid.Column="2" Width="200" Height="100" FontSize="20" Margin="-22" Foreground="Blue">Points:0</TextBlock>
+        <!--<TextBlock x:Name="Divider" Grid.Row="20" Grid.Column="4" Width="200" Height="100" FontSize="20" Margin="-15" Foreground="Blue">   |</TextBlock>-->
+        <TextBlock x:Name="Health" Grid.Row="21" Grid.Column="2" Width="200" Height="100" FontSize="20" Margin="-22" Foreground="Blue">Power:3</TextBlock>
         <TextBlock x:Name="GameOverTxt" Grid.Row="14" Grid.Column="12" FontSize="50" Foreground="White" FontWeight="Bold" Margin="-120" Visibility="Hidden">Game Over</TextBlock>
-            <!--<Image Grid.Row="0" Grid.Column="0" Width="100" Source="Images/si1_1.png" Margin="93,39,94,0" Height="100" VerticalAlignment="Top"/>-->
     </Grid>
 
 </Window>

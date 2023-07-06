@@ -26,7 +26,7 @@
               
         <Image Source= "Images/laser.png" Grid.Row="19" Grid.Column ="10" Width="60" Height="60" x:Name="myLaser" Visibility="Hidden"></Image>
 
-        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="17" Grid.Column ="10" Margin="-500" Width="500" Height="500"  x:Name="myShip" ></Image>
+        <Image Source= "Images/Space-Invaders-Ship.png" Grid.Row="20" Grid.Column ="10" Margin="-15,200,0,0" Width="60" Height="60"  x:Name="myShip" ></Image>
         
         <TextBlock x:Name="myPoints" Grid.Row="20" Grid.Column="2" Width="200" Height="100" FontSize="20" Margin="-22" Foreground="Blue">Points:0</TextBlock>
         <!--<TextBlock x:Name="Divider" Grid.Row="20" Grid.Column="4" Width="200" Height="100" FontSize="20" Margin="-15" Foreground="Blue">   |</TextBlock>-->

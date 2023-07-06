@@ -29,11 +29,11 @@ namespace wpfapp1
         public bool invadertoggle = false;
 
         public int ShipX = 10;
-        public int ShipY = 20;
+        public int ShipY = 28;
         public bool Shiptoggle = false;
         public int count = 0;
         public bool isintro = true;
-        public int introcount = 8;
+        public int introcount = 10;
         public int Hp { get; set; } = 3;
         public int InvX = 0;
         public int InvY = 0;
@@ -55,8 +55,7 @@ namespace wpfapp1
         public List<Image> Images { get; set; }
       
         private Image Invlaser { get; set; }
-
-        
+        public int ShipTopMargin { get; private set; } = 200;
 
         public MainWindow()
         {
@@ -331,9 +330,15 @@ namespace wpfapp1
                 if (introcount > 0)
                 {
                     introcount--;
-                    myShip.Width = myShip.Width - 50; myShip.Height = myShip.Height - 50;
+                    //ShipY--;
+                    ShipTopMargin = ShipTopMargin - 25;
+                    Thickness t = new Thickness(-20, ShipTopMargin, 0, 0);
+                    myShip.Margin = t;
+                    //Grid.SetRow(myShip, ShipY);
+                   // myShip.Width = myShip.Width - 50; myShip.Height = myShip.Height - 50;
                 }
-                if (introcount == 0) { myShip.Width = 80; myShip.Height = 80; }
+                
+                //if (introcount == 0) { myShip.Width = 80; myShip.Height = 80; }
             }
         }
 

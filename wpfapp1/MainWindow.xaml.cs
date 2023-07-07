@@ -69,7 +69,7 @@ namespace wpfapp1
                 if (GameIsRunning)
                 {
                     Update();
-                    ShipHit(Shiptoggle);
+                    ShipHitUpdate(Shiptoggle);
                     
                 }
                
@@ -135,13 +135,23 @@ namespace wpfapp1
 
         private async void UpdateShipFireTasks()
         {
-           
-            while (SpI.List.Count > 0)
+            while (true)
             {
                 await Task.Delay(50);
-                AfterBurner();
-                Laser();
-                CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
+                if (SpI.List.Count == 0)
+                {
+
+                    RemoveInvLaser();
+                    RemoveShipLaser();
+                    GameOverTxt.Text = "Success!";
+                }
+
+                if (SpI.List.Count > 0)
+                {
+                    AfterBurner();
+                    Laser();
+                    CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
+                }
             }
         }
 
@@ -211,28 +221,32 @@ namespace wpfapp1
         }
         private async void Update()
         {
-            while (SpI.List.Count!=0)
+            while(true)//while (SpI.List.Count!=0)
             {
-                invadertoggle = !invadertoggle;
                 await Task.Delay(800);
-                UpdateInvaders(invadertoggle);
-                
-                //if (!GameIsRunning) { RemoveShip(invadertoggle); }
+                if (SpI.List.Count != 0)
+                {
+                    invadertoggle = !invadertoggle;
+                    UpdateInvaders(invadertoggle);
 
-                if (SpI.List.Count == 0) 
+
+                    if (!GameIsRunning)
+                    {
+                        GameOverTxt.Visibility = Visibility.Visible;
+                        MyGrid.Children.Remove(myShip);
+                        break;
+                    }
+                }
+                else if (SpI.List.Count == 0)
                 {
                     RemoveInvLaser();
                     RemoveShipLaser();
                     GameOverTxt.Text = "Success!";
-                }
-                if (!GameIsRunning)
-                {
                     GameOverTxt.Visibility = Visibility.Visible;
-                    MyGrid.Children.Remove(myShip);
-                    break; 
                 }
-             
             }
+            
+            
         }
       
         public void UpdateInvaders(bool toggle) //toggle is for image
@@ -286,6 +300,7 @@ namespace wpfapp1
                            Toerase.Visibility = Visibility.Hidden; 
                            Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
                            myPoints.Text = "Points:" + Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
+                        
                            break;   
                         }
                 }
@@ -294,12 +309,11 @@ namespace wpfapp1
                 if(InvFireY == ShipY && InvFireX == ShipX)
                 {
                      isHit = true;
-                    //RemoveShip();
-                    //GameIsRunning = false;
+                  
                 }
         }
 
-        private async void ShipHit(bool toggle)
+        private async void ShipHitUpdate(bool toggle)
         {
                 while (true)
                 {
@@ -308,15 +322,17 @@ namespace wpfapp1
                 if (isHit && count < 8) 
                     {
                         count++;
+                        
                         myShip.Visibility = toggle ? Visibility.Visible : Visibility.Hidden;
                         toggle = !toggle;
                     }
                     
-                    if (count == 8)
+                    if (count == 8 && isHit == true)
                     {
                         Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power:{Hp.ToString()}"; 
                         count = 0; 
                     }
+                 
                     if(Hp == 0) GameIsRunning = false;
             }
         }
@@ -330,15 +346,15 @@ namespace wpfapp1
                 if (introcount > 0)
                 {
                     introcount--;
-                    //ShipY--;
+                   
                     ShipTopMargin = ShipTopMargin - 25;
                     Thickness t = new Thickness(-20, ShipTopMargin, 0, 0);
                     myShip.Margin = t;
-                    //Grid.SetRow(myShip, ShipY);
-                   // myShip.Width = myShip.Width - 50; myShip.Height = myShip.Height - 50;
+                    
                 }
+                if (introcount == 0) isintro = false;
                 
-                //if (introcount == 0) { myShip.Width = 80; myShip.Height = 80; }
+               
             }
         }
 
@@ -369,7 +385,7 @@ namespace wpfapp1
         {
             
             SpI = new SpaceInvaders2(22, SpaceInvaders.Typeui.WpfApp);
-            
+           
             SpI.InitEnemies(); //ok
             SpI.List.Count();
             int count = 0; // ?

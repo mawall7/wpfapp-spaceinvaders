@@ -29,7 +29,7 @@ namespace wpfapp1
         public bool invadertoggle = false;
 
         public int ShipX = 10;
-        public int ShipY = 28;
+        public int ShipY = 20;
         public bool Shiptoggle = false;
         public int count = 0;
         public bool isintro = true;
@@ -63,16 +63,20 @@ namespace wpfapp1
                 InitializeComponent();
                 
                 UpdateInvadersGrid();
-                UpdateShipFireTasks(); 
-                UpdateInvadersFireTasks();
-                ShipAnimation();
+                CreateInvLaser();
+               
+               
                 if (GameIsRunning)
                 {
+                // InvLaser2();
+                 
                     Update();
+                    UpdateInvadersFireTasks(); //problem med collision
+                    UpdateShipFireTasks();
+                    ShipAnimation();
                     ShipHitUpdate(Shiptoggle);
-                    
                 }
-               
+    
                 
         }
 
@@ -115,7 +119,7 @@ namespace wpfapp1
 
         public void Laser()
         {
-                if(Fire ==  false || LaserY == 0)/*if(LaserY == 0)*/
+                if(Fire ==  false || LaserY == 0)//if(LaserY == 0)* ? behövs if Fire == false? kan sätta LaserY till 19 från start ist?
                 {
                     LaserY = 19;
                     Fire = false;
@@ -131,13 +135,42 @@ namespace wpfapp1
                     Grid.SetColumn(myLaser, LaserX);
                     
                 }
+
+            //Invlaser below
+
+
+            //samma sak som 28 här blir det fel ? och man kan bli träffad än då ShipY är mindre än skeppet det har åkt förbi.
+            /*if(InvFireY == ShipY)*/   //to do? då blir det collision men det händer då även då skeppet är över skottet ser ut som att ShipY < InvFireY men det kanske bara ser ut så
+            if (InvFireY < 28)    //? fungerade igen efter nedanstående ändringar ShipY 
+            {
+                Grid.SetRow(Invlaser, InvFireY++);
+                Grid.SetColumn(Invlaser, InvFireX);
+            }
+
+            if ( (InvFireY == ShipY && InvFireX == ShipX ) || InvFireY >= 28) {
+
+                if (InvFireY == ShipY && InvFireX == ShipX ) { isHit = true; } //invader collision detection
+                
+                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                InvFireY = SpI.List[randomsi].PosY + 1;
+                InvFireX = SpI.List[randomsi].PosX;
+
+                Grid.SetColumn(Invlaser, InvFireX);
+                Grid.SetRow(Invlaser, InvFireY);
+                //Invlaser.Visibility = Visibility.Visible;
+            }
+
+           
+
+
+
         }
 
         private async void UpdateShipFireTasks()
         {
             while (true)
             {
-                await Task.Delay(50);
+                await Task.Delay(50); //50
                 if (SpI.List.Count == 0)
                 {
 
@@ -149,9 +182,12 @@ namespace wpfapp1
                 if (SpI.List.Count > 0)
                 {
                     AfterBurner();
+                    //CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
                     Laser();
-                    CheckCollision(); // to do gör som delegat lägg till metoder collision för både skepp och invs
+                   
                 }
+
+               
             }
         }
 
@@ -165,13 +201,13 @@ namespace wpfapp1
             myShip.Source = image;
         }
 
-        private async void UpdateInvadersFireTasks()
+        private async void UpdateInvadersFireTasks() //obs invfire uppdateras inte tillräckligt är felet här?
         {
             
             while (SpI.List.Count > 0) 
             {
-                await Task.Delay(100);
-                InvLaser();
+                await Task.Delay(50); 
+                
                 CheckCollision();
             }
         }
@@ -180,44 +216,78 @@ namespace wpfapp1
         {
             if (Invlaser != null)
             {
-                MyGrid.Children.Remove(Invlaser);
-                Invlaser.Visibility = Visibility.Hidden;
+                Grid.SetRow(Invlaser, 2);
+                //MyGrid.Children.Remove(Invlaser);
+                //Invlaser.Visibility = Visibility.Hidden;
             }
         }
 
-        public void InvLaser() //to do skapa handler för att skapa ny Image
+        public async void InvLaser2() //används inte för tillfället koden finns ist  i Laser
         {
-         
-            if (InvFire && SpI.List.Count > 0)
-
+            while (true)
             {
-                InvFire = false;
+            //InvFire = true;
+            await Task.Delay(400);
+            if (InvFireY > 5)/*if(LaserY == 0)*/
+            {
+             
+                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                InvFireY = SpI.List[randomsi].PosY + 1;
+                InvFireX = SpI.List[randomsi].PosX;
+
+                Grid.SetColumn(Invlaser, InvFireX);
+                Grid.SetRow(Invlaser, InvFireY);
+
+            }
+
+            Grid.SetRow(Invlaser, InvFireY++);
+            Grid.SetColumn(Invlaser, InvFireX);
+        
+            }
+        }
+            public void CreateInvLaser() //to do skapa handler för att skapa ny Image
+        {
+
+            //if (InvFire && SpI.List.Count > 0)
+
+            //{
+                InvFire = true;//InvFire = false;
                 Invlaser = new Image(); Invlaser.Name = "il";
                 string path = "/wpfapp1;component/Images/laser.png";
                 BitmapImage image = new BitmapImage(new Uri(path, UriKind.Relative));
                 Invlaser.Source = image;
                 Invlaser.Width = 30; Invlaser.Height = 30;
+                Invlaser.Visibility = Visibility.Visible;  
 
                 MyGrid.Children.Add(Invlaser);
-               
-                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
-                InvFireY = SpI.List[randomsi].PosY + 1;
-                InvFireX = SpI.List[randomsi].PosX;
 
-                Grid.SetColumn(Invlaser, SpI.List[randomsi].PosX);
-                
-            }
-          
-            if (InvFireY <= ShipY)
-            {
-                Grid.SetRow(Invlaser, InvFireY++);
-            }
-            if(InvFireY > ShipY)
-            {
-                    
-                MyGrid.Children.Remove(Invlaser);
-                InvFire = true;
-            }
+                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                //InvFireY = SpI.List[randomsi].PosY + 1;
+                InvFireX = SpI.List[randomsi].PosX;
+                InvFireY = SpI.List[randomsi].PosY + 1;
+                Grid.SetColumn(Invlaser, InvFireX);
+                Grid.SetRow(Invlaser, InvFireY);
+
+                //Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                //InvFireY = ShipY + 3;
+                //InvFireY = SpI.List[randomsi].PosY + 1;
+                //InvFireX = SpI.List[randomsi].PosX;
+
+                //Grid.SetColumn(Invlaser, SpI.List[randomsi].PosX);
+
+            //}
+
+            //if (InvFireY <= ShipY)
+            //{
+            //    Grid.SetRow(Invlaser, InvFireY++);
+            //}
+            //if (InvFireY >= ShipY)
+            //{
+            //    Grid.SetRow(Invlaser, 0);
+            //    RemoveInvLaser();
+            //    InvFire = true; // InvFire = t
+            //}
+
         }
         private async void Update()
         {
@@ -226,9 +296,9 @@ namespace wpfapp1
                 await Task.Delay(800);
                 if (SpI.List.Count != 0)
                 {
+                    
                     invadertoggle = !invadertoggle;
                     UpdateInvaders(invadertoggle);
-
 
                     if (!GameIsRunning)
                     {
@@ -278,42 +348,42 @@ namespace wpfapp1
                 }
         }
 
-        public void CheckCollision()
+        public void CheckCollision() //invaderlaser detection hits ship flyttad till Laser fungerar nu ändrade pga
         {
-               
-                Toerase = null;
-                int count = 0;
-                foreach (var item in SpI.List)
+            //if (InvFireY == ShipY && InvFireX == ShipX) //collision invader laser hit
+            //{
+            //    isHit = true; 
+            //    myPoints.Text = "tookHit";
+            //}
+
+            Toerase = null; //collision ship laser hit invader
+            int count = 0;
+            foreach (var item in SpI.List)
+            {
+                count++;
+
+                if (LaserY == item.PosY && LaserX == item.PosX)//&& Toerase == null) //Nextmove ska bara köra igen om spi rört sig
                 {
-                    count++;
+                    Toerase = Images[count - 1];
 
-                    if (LaserY == item.PosY && LaserX == item.PosX )//&& Toerase == null) //Nextmove ska bara köra igen om spi rört sig
+                    if (Toerase != null)
                     {
-                       Toerase = Images[count - 1];
+                        Fire = false;
+                        Points++;
 
-                        if (Toerase != null)
-                        {
-                            Fire = false;
-                            Points++;
-                         
-                           SpI.List.Remove((GameObject)item); //tar bort object i invaders klassListan
-                           Toerase.Visibility = Visibility.Hidden; 
-                           Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
-                           myPoints.Text = "Points:" + Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
-                        
-                           break;   
-                        }
+                        SpI.List.Remove((GameObject)item); //tar bort object i invaders klassListan
+                        Toerase.Visibility = Visibility.Hidden;
+                        Images.Remove(Toerase);//to do remove element image tar bort elementet men ritas ändå ut där den blir skjuten löst det temporärt med Visibliity hidden. tas bort från listan och Image collection i Update. 
+                        myPoints.Text = "Points:" + Points.ToString(); //to do points visar bara 4 bokstäver fick ha 2 textblocks ist.
+
+                        break;
+                    }
                 }
 
             }
-                if(InvFireY == ShipY && InvFireX == ShipX)
-                {
-                     isHit = true;
-                  
-                }
-        }
+        }   
 
-        private async void ShipHitUpdate(bool toggle)
+        private async void ShipHitUpdate(bool toggle) //ship takes hit animation
         {
                 while (true)
                 {
@@ -337,7 +407,7 @@ namespace wpfapp1
             }
         }
 
-        public async void ShipAnimation()
+        public async void ShipAnimation() //introanimation
         {
             while (true)
             {
@@ -357,8 +427,6 @@ namespace wpfapp1
                
             }
         }
-
-
 
             public void WriteInvaders(Grid My_Grid, List<Image> Imagecontrs, string path, int count = 0)
         {
@@ -403,6 +471,7 @@ namespace wpfapp1
             SpI.DrawInvaders(MyGrid, Images, "/wpfapp1;component/Images/si1_2.png");
             Images = SpI.Images;
 
+            Grid.SetRow(myShip, ShipY); Grid.SetColumn(myShip, ShipX);
             //to do flytta till initmetod eller byt namn tillhör ej spaceinvaders utan ship
             //myShip.Height = 500; myShip.Width = 500;
         }

@@ -73,8 +73,10 @@ namespace wpfapp1
                     Update();
                     UpdateInvadersFireTasks(); //problem med collision
                     UpdateShipFireTasks();
+                    InvLaser2();
                     ShipAnimation();
                     ShipHitUpdate(Shiptoggle);
+                
                 }
     
                 
@@ -139,26 +141,26 @@ namespace wpfapp1
             //Invlaser below
 
 
-            //samma sak som 28 här blir det fel ? och man kan bli träffad än då ShipY är mindre än skeppet det har åkt förbi.
-            /*if(InvFireY == ShipY)*/   //to do? då blir det collision men det händer då även då skeppet är över skottet ser ut som att ShipY < InvFireY men det kanske bara ser ut så
-            if (InvFireY < 28)    //? fungerade igen efter nedanstående ändringar ShipY 
-            {
-                Grid.SetRow(Invlaser, InvFireY++);
-                Grid.SetColumn(Invlaser, InvFireX);
-            }
+            ////samma sak som 28 här blir det fel ? och man kan bli träffad än då ShipY är mindre än skeppet det har åkt förbi.
+            ///*if(InvFireY == ShipY)*/   //to do? då blir det collision men det händer då även då skeppet är över skottet ser ut som att ShipY < InvFireY men det kanske bara ser ut så
+            //if (InvFireY < 28)    //? fungerade igen efter nedanstående ändringar ShipY 
+            //{
+            //    Grid.SetRow(Invlaser, InvFireY++);
+            //    Grid.SetColumn(Invlaser, InvFireX);
+            //}
 
-            if ( (InvFireY == ShipY && InvFireX == ShipX ) || InvFireY >= 28) {
+            //if ( (InvFireY == ShipY && InvFireX == ShipX ) || InvFireY >= 28) {
 
-                if (InvFireY == ShipY && InvFireX == ShipX ) { isHit = true; } //invader collision detection
+            //    if (InvFireY == ShipY && InvFireX == ShipX ) { isHit = true; } //invader collision detection
                 
-                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
-                InvFireY = SpI.List[randomsi].PosY + 1;
-                InvFireX = SpI.List[randomsi].PosX;
+            //    Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+            //    InvFireY = SpI.List[randomsi].PosY + 1;
+            //    InvFireX = SpI.List[randomsi].PosX;
 
-                Grid.SetColumn(Invlaser, InvFireX);
-                Grid.SetRow(Invlaser, InvFireY);
-                //Invlaser.Visibility = Visibility.Visible;
-            }
+            //    Grid.SetColumn(Invlaser, InvFireX);
+            //    Grid.SetRow(Invlaser, InvFireY);
+            //    //Invlaser.Visibility = Visibility.Visible;
+            //}
 
            
 
@@ -171,10 +173,10 @@ namespace wpfapp1
             while (true)
             {
                 await Task.Delay(50); //50
-                if (SpI.List.Count == 0)
+                if (SpI.List.Count == 0) 
                 {
 
-                    RemoveInvLaser();
+                    RemoveInvLaser(); //flytta till UpdateInvaderTasks
                     RemoveShipLaser();
                     GameOverTxt.Text = "Success!";
                 }
@@ -201,15 +203,24 @@ namespace wpfapp1
             myShip.Source = image;
         }
 
-        private async void UpdateInvadersFireTasks() //obs invfire uppdateras inte tillräckligt är felet här?
+        private async void UpdateInvadersFireTasks() //gjort! obs invfire uppdateras inte tillräckligt är felet här?
         {
             
             while (SpI.List.Count > 0) 
             {
                 await Task.Delay(50); 
                 
-                CheckCollision();
+                CheckCollision(); // kollarinvader laser collison i Laser(); to do använda klass istället Collision class med en funktion för invader en för ship?
+                
             }
+            
+            if (SpI.List.Count == 0)
+            {
+
+                RemoveInvLaser(); 
+             
+            }
+
         }
 
         private void RemoveInvLaser()
@@ -226,26 +237,36 @@ namespace wpfapp1
         {
             while (true)
             {
-            //InvFire = true;
-            await Task.Delay(400);
-            if (InvFireY > 5)/*if(LaserY == 0)*/
-            {
-             
-                Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
-                InvFireY = SpI.List[randomsi].PosY + 1;
-                InvFireX = SpI.List[randomsi].PosX;
+                //InvFire = true;
+                await Task.Delay(75);
 
-                Grid.SetColumn(Invlaser, InvFireX);
-                Grid.SetRow(Invlaser, InvFireY);
+                //samma sak som 28 här blir det fel ? och man kan bli träffad än då ShipY är mindre än skeppet det har åkt förbi.
+                /*if(InvFireY == ShipY)*/   //to do? då blir det collision men det händer då även då skeppet är över skottet ser ut som att ShipY < InvFireY men det kanske bara ser ut så
+                if (InvFireY < 28)    //? fungerade igen efter nedanstående ändringar ShipY 
+                {
+                    Grid.SetRow(Invlaser, InvFireY++);
+                    Grid.SetColumn(Invlaser, InvFireX);
+                }
 
-            }
+                if ((InvFireY == ShipY && InvFireX == ShipX) || InvFireY >= 28)
+                {
 
-            Grid.SetRow(Invlaser, InvFireY++);
-            Grid.SetColumn(Invlaser, InvFireX);
-        
+                    if (InvFireY == ShipY && InvFireX == ShipX) { isHit = true; } //invader collision detection
+
+                    Random random = new Random(); int randomsi = random.Next(0, SpI.List.Count);
+                    InvFireY = SpI.List[randomsi].PosY + 1;
+                    InvFireX = SpI.List[randomsi].PosX;
+
+                    Grid.SetColumn(Invlaser, InvFireX);
+                    Grid.SetRow(Invlaser, InvFireY);
+                    //Invlaser.Visibility = Visibility.Visible;
+                }
+
+
+
             }
         }
-            public void CreateInvLaser() //to do skapa handler för att skapa ny Image
+        public void CreateInvLaser() //to do skapa handler för att skapa ny Image
         {
 
             //if (InvFire && SpI.List.Count > 0)
@@ -293,10 +314,10 @@ namespace wpfapp1
         {
             while(true)//while (SpI.List.Count!=0)
             {
-                await Task.Delay(800);
+                await Task.Delay(500);
                 if (SpI.List.Count != 0)
                 {
-                    
+                    //myPoints.Text = SpI.List[0].PosY.ToString();
                     invadertoggle = !invadertoggle;
                     UpdateInvaders(invadertoggle);
 
@@ -380,6 +401,8 @@ namespace wpfapp1
                     }
                 }
 
+                if(item.PosY == 18  && item.PosX == ShipX ) { isHit = true;} //to do fungerar ej kolla invaders
+               
             }
         }   
 
@@ -389,7 +412,7 @@ namespace wpfapp1
                 {
                     await Task.Delay(500);
                 
-                if (isHit && count < 8) 
+                if (isHit && count < 4) 
                     {
                         count++;
                         
@@ -397,10 +420,13 @@ namespace wpfapp1
                         toggle = !toggle;
                     }
                     
-                    if (count == 8 && isHit == true)
+                    if (count == 4 && isHit == true)
                     {
-                        Hp--; isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power:{Hp.ToString()}"; 
-                        count = 0; 
+                        isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power:{Hp.ToString()}"; 
+                        count = 0;
+                        if (Hp > 0) { Hp--; }
+                    // 428 fungerar ej visar blinkar bara en gång 
+                    if (SpI.List.Any(inv => inv.PosY > ShipY)) { GameIsRunning = false; }
                     }
                  
                     if(Hp == 0) GameIsRunning = false;

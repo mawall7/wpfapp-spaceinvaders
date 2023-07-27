@@ -24,6 +24,14 @@ namespace wpfapp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        public double Left { get; set; } = -5;
+        public double Top { get; set; } = -20;
+        public double Right { get; set; } = 0;
+        public double Bottom { get; set; } = 0;
+        public bool KeyLeft { get; set; } = false;
+        public bool KeyRight { get; set; } = false;
+        public bool ReadyForKey { get; set; } = true;
+        public int Margincount { get; set; } = 0;
         public bool Toogle { get; set; } = false;
         public bool GameIsRunning = true;
         public bool invadertoggle = false;
@@ -66,20 +74,51 @@ namespace wpfapp1
                 CreateInvLaser();
                
                
-                if (GameIsRunning)
+                if (GameIsRunning && SpI.List.Count > 0)  //to do InvLaser2 list när alla inv är ner skjutna
                 {
                 // InvLaser2();
                  
                     Update();
+                    InvLaser2();
                     UpdateInvadersFireTasks(); //problem med collision
                     UpdateShipFireTasks();
-                    InvLaser2();
                     ShipAnimation();
+                    KeyAnim();
                     ShipHitUpdate(Shiptoggle);
                 
                 }
     
                 
+        }
+
+        private async void KeyAnim() //todo gör knapptrycktning som task istället eller flera events så det går att skjuta samtidigt som man flyger höger vänster skeppet ej stannar
+        {
+            while (true)
+            {
+                await Task.Delay(1);
+                {
+                    if(!ReadyForKey)
+                    {
+                        Margincount++;
+                        //gör nedan höger "smoothflying" som en animation istället vid ett knapptryck ska animationen köras innan knapptryck lagras kanske dessutom och handler som kör animationen först och sedan tar nästa lagrade knapptryck och hanterar det
+
+                        myShip.Margin = new Thickness(Left, Top, Right, Bottom);
+                        if (Margincount == 18)
+                        {
+                            Margincount = 0; Left = -10; Top = -20; Right = -10; Bottom = 0;
+                            ReadyForKey = true; //animation slutar köras och knapptryck blir möjligt igen
+                            myShip.Margin = new Thickness(Left, Top, Right, Bottom);
+                            if (KeyRight) ShipX++;
+                            if (KeyLeft) ShipX--;
+                            KeyRight = false; KeyLeft = false;
+                        }
+                        else if (KeyRight){ Left = Left +2; Right = Right -2; }
+                        else if (KeyLeft) { Left = Left -2; Right = Right + 2; }
+                        Grid.SetColumn(myShip, ShipX);
+                      
+                    }
+                }
+            }
         }
 
         private void RemoveShip()
@@ -92,17 +131,24 @@ namespace wpfapp1
         {
 
      
-            if (e.Key == Key.Left && ShipX > 0)
+            if (e.Key == Key.Left && ShipX > 0 && ReadyForKey)
             {
-                ShipX--;
-                Grid.SetColumn(myShip, ShipX);
+                ReadyForKey = false;
+                KeyLeft = true; 
+                //ShipX--;
+                //Grid.SetColumn(myShip, ShipX);
 
 
             }
-            if (e.Key == Key.Right && ShipX <= 200)
+            if (e.Key == Key.Right && ShipX <= 200 && ReadyForKey) //to do gör knapptryck till olika tasks för att inte stanna skeppet vid fire
             {
-                ShipX++;
-                Grid.SetColumn(myShip, ShipX);
+                ReadyForKey = false;
+                KeyRight = true;
+                //ShipX++;
+                //Grid.SetColumn(myShip, ShipX);
+              // ta bort skapa handler ist. som lagrar knapptryck? eller blir det bra rörelseflöde ändå?
+                
+               
             }
 
             if (e.Key == Key.Space && Fire == false)
@@ -422,10 +468,10 @@ namespace wpfapp1
                     
                     if (count == 4 && isHit == true)
                     {
+                        Hp--; 
                         isHit = false; myShip.Visibility = Visibility.Visible; Health.Text = $"Power:{Hp.ToString()}"; 
                         count = 0;
-                        if (Hp > 0) { Hp--; }
-                    // 428 fungerar ej visar blinkar bara en gång 
+                   
                     if (SpI.List.Any(inv => inv.PosY > ShipY)) { GameIsRunning = false; }
                     }
                  
@@ -500,6 +546,8 @@ namespace wpfapp1
             Grid.SetRow(myShip, ShipY); Grid.SetColumn(myShip, ShipX);
             //to do flytta till initmetod eller byt namn tillhör ej spaceinvaders utan ship
             //myShip.Height = 500; myShip.Width = 500;
+
+            myShip.Margin = new Thickness(Left, Top, Right, Bottom); // för margin movement right
         }
            
     }
